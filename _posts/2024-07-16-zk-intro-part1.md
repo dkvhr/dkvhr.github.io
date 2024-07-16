@@ -117,7 +117,7 @@ If confirmed, $V$ accepts the protocol and trusts $P$
 
 We will discuss the Schnorr protocol in more detail in part 2, where we will use Circom to implement this and the graph isomorphism protocol. Until then~ ^^
 
-# Referências
+# References
 [1] [Cave example](https://www.youtube.com/watch?v=MwgpuY5X9Iw)\
 [2] [PPT algorithms](https://en.wikipedia.org/wiki/PP_(complexity))\
 [3] [Negligible functions](https://www.youtube.com/watch?v=l5A3oEG-XKk)\
