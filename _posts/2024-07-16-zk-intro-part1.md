@@ -41,7 +41,7 @@ If $x \notin L$, $\forall$ algorithm $P*$, $V$ will reject the protocol with a p
 
 ### Zero-Knowledge Intuition
 1. The PPT algorithm $V*$ learns **nothing** from the protocol.
-2. Everything that $V*$ learns, $V*$ could have computed alone.
+2. Everything that $ V* $ learns, $ V* $ could have computed alone.
 3. $\exists$ a PPT algorithm $S$ that $V*$ could use to generate the same knowledge ($\tau$). Basically, $S$ is a simulator.
 4. $\exists$ a public PPT algorithm $S$ that generates a sequence of $\tau_{sim}$ such that:
 {$\tau_{sim}$} is [computationally indistinguishable](https://en.wikipedia.org/wiki/Computational_indistinguishability) from {$\tau_{real}$}
