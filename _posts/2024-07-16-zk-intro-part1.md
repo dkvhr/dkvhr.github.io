@@ -121,7 +121,7 @@ We will discuss the Schnorr protocol in more detail in part 2, where we will use
 [1] [Cave example](https://www.youtube.com/watch?v=MwgpuY5X9Iw)\
 [2] [PPT algorithms](https://en.wikipedia.org/wiki/PP_(complexity))\
 [3] [Negligible functions](https://www.youtube.com/watch?v=l5A3oEG-XKk)\
-[4] [Computational indistinguishability](https://en.wikipedia.org/wiki/Computational_indistinguishability)
+[4] [Computational indistinguishability](https://en.wikipedia.org/wiki/Computational_indistinguishability)\
 [5] Neal Koblitz. A Course in Number Theory and Cryptography\
 [6] [Dan Boneh, Victor Shoup. A Graduate Course in Applied Cryptography](https://crypto.stanford.edu/~dabo/cryptobook/BonehShoup_0_4.pdf)\
 [7] [Yehuda Lindell. How To Simulate It – A Tutorial on the Simulation Proof Technique](https://eprint.iacr.org/2016/046.pdf)\
