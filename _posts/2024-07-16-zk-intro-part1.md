@@ -125,6 +125,6 @@ We will discuss the Schnorr protocol in more detail in part 2, where we will use
 [5] Neal Koblitz. A Course in Number Theory and Cryptography\
 [6] [Dan Boneh, Victor Shoup. A Graduate Course in Applied Cryptography](https://crypto.stanford.edu/~dabo/cryptobook/BonehShoup_0_4.pdf)\
 [7] [Yehuda Lindell. How To Simulate It – A Tutorial on the Simulation Proof Technique](https://eprint.iacr.org/2016/046.pdf)\
-[8] [Lecture notes 18 from CS6180: Theory of computing - Cornell University](http://www.cs.cornell.edu/courses/cs6810/2009sp/scribe/lecture18.pdf)\
+[8] [Lecture notes 18 from CS6180: Theory of computing - Cornell University](https://www.cs.cornell.edu/courses/cs6810/2009sp/scribe/lecture18.pdf)\
 [9] [Nguyen Thoi Minh Quan. Intuitive Advanced Cryptography](https://github.com/cryptosubtlety/intuitive-advanced-cryptography/blob/master/advancedcrypto.pdf)\
 [10] [Vipul Goyal. Lecture 17: Zero-Knowledge Proofs I](https://www.youtube.com/watch?v=VnZVW1iG2po&list=PLI3cKEs5b6gvelkJnHf16r3ADhYvcQjdr&index=17)
