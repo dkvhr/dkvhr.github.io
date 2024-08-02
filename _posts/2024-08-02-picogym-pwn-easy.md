@@ -1,6 +1,6 @@
 ---
 title: "Solution of the initial picoGym pwn challenges"
-date: 2024-07-31 00:00:00 -0300
+date: 2024-08-02 00:00:00 -0300
 categories: [pwn, writeup]
 tags: [pwn, writeup]
 math: true
